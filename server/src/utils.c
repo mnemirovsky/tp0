@@ -51,7 +51,7 @@ int iniciar_servidor(void)
 	status = listen(socket_servidor, SOMAXCONN);
 
 	if (status != 0) {
-		exit(EXIT_CODE_FAILED_LISTENING_ON_ADDRESS);
+		exit(EXIT_CODE_FAILED_LISTENING_TO_ADDRESS);
 	}
 	
 	freeaddrinfo(servinfo);

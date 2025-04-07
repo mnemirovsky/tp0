@@ -1,4 +1,5 @@
 #include "client.h"
+#include "utils.h"
 
 int main(void)
 {
@@ -54,7 +55,7 @@ int main(void)
 	// Enviamos al servidor el valor de CLAVE como mensaje
 
 	// Armamos y enviamos el paquete
-	enviar_paquete(conexion, string);
+	enviarpaquete(conexion, valor);
 
 	terminar_programa(conexion, logger, config);
 
@@ -107,11 +108,10 @@ void leer_consola(t_log* logger)
 }
 
 
-void enviar_paquete(int conexion, char* string)
+void enviarpaquete(int conexion, char* string)
 {
 	char* leido;
-	t_paquete* paquete;
-	crear_paquete(paquete);
+	t_paquete* paquete = crear_paquete();
 
 	int tamanio = strlen(string) + 1;
 

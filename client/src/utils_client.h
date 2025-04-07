@@ -16,6 +16,11 @@ typedef enum
 	PAQUETE
 }op_code;
 
+typedef enum
+{
+	EXIT_CLIENT_FAILED_TO_CONNECT
+}errors;
+
 typedef struct
 {
 	int size;
