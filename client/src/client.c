@@ -4,7 +4,6 @@ int main(void)
 {
 	/*---------------------------------------------------PARTE 2-------------------------------------------------------------*/
 
-	int conexion;
 	char* ip;
 	char* puerto;
 	char* valor;
@@ -49,12 +48,15 @@ int main(void)
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
 
 	// Creamos una conexión hacia el servidor
-	int conexion = crear_conexion(ip, puerto);
+	int	conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
+	enviar_mensaje(valor, conexion);
 
 	// Armamos y enviamos el paquete
-	enviar_paquete(conexion, valor);
+	t_paquete *paquete = crear_paquete();
+
+	enviar_paquete(paquete, conexion);
 
 	terminar_programa(conexion, logger, config);
 
