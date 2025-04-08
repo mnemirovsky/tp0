@@ -56,6 +56,8 @@ int main(void)
 	// Armamos y enviamos el paquete
 	t_paquete *paquete = crear_paquete();
 
+	leer_consola(paquete);
+
 	enviar_paquete(paquete, conexion);
 
 	terminar_programa(conexion, logger, config);
@@ -86,10 +88,50 @@ t_config* iniciar_config(void)
 	return nuevo_config;
 }
 
-void leer_consola(t_log* logger)
+void leer_consola(t_paquete* paquete)
 {
 	char* leido;
+	#include <string.h>
+#include <stdlib.h>
 
+void leer_consola(t_paquete* paquete) {
+    char* leido;
+
+    // Inicializa el buffer del paquete si no está inicializado
+    if (paquete->buffer == NULL) {
+        paquete->buffer = malloc(sizeof(t_buffer));
+        paquete->buffer->size = 0;
+        paquete->buffer->stream = malloc(1); // Inicializa con un tamaño mínimo
+        paquete->buffer->stream[0] = '\0';
+    }
+
+    while (1) {
+        leido = readline("> ");
+
+        if (leido) {
+            log_info(logger, "%s", leido);
+
+            // Verificar si la línea está vacía
+            if (strcmp(leido, "") == 0) {
+                free(leido);
+                break;
+            }
+
+            // Concatenar la línea al buffer del paquete
+            paquete->buffer->size += strlen(leido) + 1; // +1 para el '\0'
+            paquete->buffer->stream = realloc(paquete->buffer->stream, paquete->buffer->size);
+            strcat(paquete->buffer->stream, leido);
+            strcat(paquete->buffer->stream, "\n"); // Agrega un salto de línea
+
+            free(leido);
+        }
+    }
+
+    // Configura el código de operación del paquete
+    paquete->codigo_operacion = OP_CODE_CONSOLA; // Ajusta según sea necesario
+}
+
+/*
 	while (1) {
 		leido = readline("> ");
 
@@ -105,7 +147,7 @@ void leer_consola(t_log* logger)
 		printf("%s\n", leido);
 		free(leido);
 	}
-	
+*/	
 }
 
 
