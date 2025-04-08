@@ -35,9 +35,9 @@ int crear_conexion(char *ip, char* puerto)
 
 	freeaddrinfo(server_info);
 
-	status = connect(fd_conexion, server_info->ai_addr, server_info->ai_addrlen);
+	err = connect(fd_conexion, server_info->ai_addr, server_info->ai_addrlen);
 
-	if (status != 0) {
+	if (err != 0) {
 		exit(EXIT_CLIENT_FAILED_TO_CONNECT);
 	}
 

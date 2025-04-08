@@ -26,15 +26,15 @@ int main(void)
 
 	config = iniciar_config();
 
-	ip		=	config_get_string_value(config,"IP");
+	ip		=	config_get_string_value(config, "IP");
 	puerto 	=	config_get_string_value(config, "PUERTO");
 	valor 	=	config_get_string_value(config, "CLAVE");
 
-	log_info(logger, ip);
-	log_info(logger, puerto);
-	log_info(logger, valor);
+	log_info(logger, config_get_string_value(config,"IP"));
+	log_info(logger, config_get_string_value(config, "PUERTO"));
+	log_info(logger, config_get_string_value(config, "CLAVE"));
 	
-	config_destroy(config);
+	
 	// Usando el config creado previamente, leemos los valores del config y los 
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
 
@@ -49,12 +49,12 @@ int main(void)
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
 
 	// Creamos una conexión hacia el servidor
-	conexion = crear_conexion(ip, puerto);
+	int conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
 
 	// Armamos y enviamos el paquete
-	enviarpaquete(conexion, valor);
+	enviar_paquete(conexion, valor);
 
 	terminar_programa(conexion, logger, config);
 
@@ -107,23 +107,8 @@ void leer_consola(t_log* logger)
 }
 
 
-void enviarpaquete(int conexion, char* string)
-{
-	char* leido;
-	t_paquete* paquete = crear_paquete();
-
-	int tamanio = strlen(string) + 1;
-
-	agregar_a_paquete(paquete, string, tamanio);
-
-	send(conexion, paquete, sizeof(paquete) + sizeof(int) + paquete->buffer->size, 0);
-	
-}
-
-
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
-	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config) 
-	  con las funciones de las commons y del TP mencionadas en el enunciado */
+	config_destroy(config);
 }
