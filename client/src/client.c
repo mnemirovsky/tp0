@@ -38,10 +38,11 @@ int main(void)
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
 
 	// Loggeamos el valor de config
+	t_paquete *paquete = crear_paquete();
 
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
-	leer_consola(logger);
+	leer_consola(paquete, logger);
 	/*-------
 	--------------------------------------------PARTE 3-------------------------------------------------------------*/
 
@@ -54,13 +55,15 @@ int main(void)
 	enviar_mensaje(valor, conexion);
 
 	// Armamos y enviamos el paquete
-	t_paquete *paquete = crear_paquete();
-
-	leer_consola(paquete);
+	
+	leer_consola(paquete, logger);
 
 	enviar_paquete(paquete, conexion);
 
 	terminar_programa(conexion, logger, config);
+
+	printf("CLIENTE CERRADO!");
+
 
 	/*---------------------------------------------------PARTE 5-------------------------------------------------------------*/
 	// Proximamente
@@ -88,38 +91,34 @@ t_config* iniciar_config(void)
 	return nuevo_config;
 }
 
-void leer_consola(t_paquete* paquete)
-{
-	char* leido;
-	#include <string.h>
-#include <stdlib.h>
 
-void leer_consola(t_paquete* paquete) {
+void leer_consola(t_paquete* paquete, t_log* logger) {
     char* leido;
 
     // Inicializa el buffer del paquete si no está inicializado
+
     if (paquete->buffer == NULL) {
-        paquete->buffer = malloc(sizeof(t_buffer));
+        paquete->buffer = malloc(sizeof(t_buffer)); // Casting explícito
         paquete->buffer->size = 0;
-        paquete->buffer->stream = malloc(1); // Inicializa con un tamaño mínimo
+        paquete->buffer->stream = malloc(1); // Casting explícito
         paquete->buffer->stream[0] = '\0';
     }
 
     while (1) {
-        leido = readline("> ");
+        leido = readline("");
 
         if (leido) {
             log_info(logger, "%s", leido);
 
             // Verificar si la línea está vacía
-            if (strcmp(leido, "") == 0) {
+            if (strcmp(leido, "\n") == 0) { // Ajuste para comparar con "\n"
                 free(leido);
                 break;
             }
 
             // Concatenar la línea al buffer del paquete
             paquete->buffer->size += strlen(leido) + 1; // +1 para el '\0'
-            paquete->buffer->stream = realloc(paquete->buffer->stream, paquete->buffer->size);
+            paquete->buffer->stream = (char*)realloc(paquete->buffer->stream, paquete->buffer->size); // Casting explícito
             strcat(paquete->buffer->stream, leido);
             strcat(paquete->buffer->stream, "\n"); // Agrega un salto de línea
 
@@ -130,6 +129,7 @@ void leer_consola(t_paquete* paquete) {
     // Configura el código de operación del paquete
     paquete->codigo_operacion = OP_CODE_CONSOLA; // Ajusta según sea necesario
 }
+
 
 /*
 	while (1) {
@@ -148,7 +148,6 @@ void leer_consola(t_paquete* paquete) {
 		free(leido);
 	}
 */	
-}
 
 
 

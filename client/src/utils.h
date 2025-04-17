@@ -13,7 +13,8 @@
 typedef enum
 {
 	MENSAJE,
-	PAQUETE
+	PAQUETE,
+	OP_CODE_CONSOLA
 }op_code;
 
 typedef enum
@@ -24,7 +25,7 @@ typedef enum
 typedef struct
 {
 	int size;
-	void* stream;
+	char* stream;
 } t_buffer;
 
 typedef struct
