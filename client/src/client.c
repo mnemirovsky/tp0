@@ -4,6 +4,7 @@ int main(void)
 {
 	/*---------------------------------------------------PARTE 2-------------------------------------------------------------*/
 
+	int conexion;
 	char* ip;
 	char* puerto;
 	char* valor;
@@ -25,40 +26,34 @@ int main(void)
 
 	config = iniciar_config();
 
+	// Usando el config creado previamente, leemos los valores del config y los 
+	// dejamos en las variables 'ip', 'puerto' y 'valor'
+
 	ip		=	config_get_string_value(config, "IP");
 	puerto 	=	config_get_string_value(config, "PUERTO");
 	valor 	=	config_get_string_value(config, "CLAVE");
 
-	log_info(logger, "%s", ip);
-	log_info(logger, "%s", puerto);
-	log_info(logger, "%s", valor);
-	
-	
-	// Usando el config creado previamente, leemos los valores del config y los 
-	// dejamos en las variables 'ip', 'puerto' y 'valor'
-
 	// Loggeamos el valor de config
-	t_paquete *paquete = crear_paquete();
 
+	log_info(logger, "%s", valor);
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
-	leer_consola(paquete, logger);
-	/*-------
-	--------------------------------------------PARTE 3-------------------------------------------------------------*/
+
+	leer_consola(logger);
+
+	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
 
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
 
 	// Creamos una conexión hacia el servidor
-	int	conexion = crear_conexion(ip, puerto);
+	conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
 	enviar_mensaje(valor, conexion);
 
 	// Armamos y enviamos el paquete
 	
-	leer_consola(paquete, logger);
-
-	enviar_paquete(paquete, conexion);
+	paquete(conexion);
 
 	terminar_programa(conexion, logger, config);
 
@@ -92,47 +87,10 @@ t_config* iniciar_config(void)
 }
 
 
-void leer_consola(t_paquete* paquete, t_log* logger) {
+void leer_consola(t_log* logger) {
     char* leido;
 
-    // Inicializa el buffer del paquete si no está inicializado
-
-    if (paquete->buffer == NULL) {
-        paquete->buffer = malloc(sizeof(t_buffer)); // Casting explícito
-        paquete->buffer->size = 0;
-        paquete->buffer->stream = malloc(1); // Casting explícito
-        paquete->buffer->stream[0] = '\0';
-    }
-
     while (1) {
-        leido = readline("");
-
-        if (leido) {
-            log_info(logger, "%s", leido);
-
-            // Verificar si la línea está vacía
-            if (strcmp(leido, "\n") == 0) { // Ajuste para comparar con "\n"
-                free(leido);
-                break;
-            }
-
-            // Concatenar la línea al buffer del paquete
-            paquete->buffer->size += strlen(leido) + 1; // +1 para el '\0'
-            paquete->buffer->stream = (char*)realloc(paquete->buffer->stream, paquete->buffer->size); // Casting explícito
-            strcat(paquete->buffer->stream, leido);
-            strcat(paquete->buffer->stream, "\n"); // Agrega un salto de línea
-
-            free(leido);
-        }
-    }
-
-    // Configura el código de operación del paquete
-    paquete->codigo_operacion = OP_CODE_CONSOLA; // Ajusta según sea necesario
-}
-
-
-/*
-	while (1) {
 		leido = readline("> ");
 
 		if (leido) {
@@ -147,9 +105,39 @@ void leer_consola(t_paquete* paquete, t_log* logger) {
 		printf("%s\n", leido);
 		free(leido);
 	}
-*/	
 
+}
 
+void paquete(int *conexion)
+{
+	// Ahora toca lo divertido!
+	char* leido;
+	t_paquete* paquete = crear_paquete();
+
+	// Leemos y esta vez agregamos las lineas al paquete
+
+	while (1) {
+		leido = readline("> ");
+
+		if (leido) {
+			agregar_a_paquete(paquete, leido, sizeof(leido));
+		}
+
+		if (strcmp(leido, "") == 0) {
+			free(leido);
+			break;
+		}
+
+		printf("%s\n", leido);
+		free(leido);
+	}
+
+	enviar_paquete(paquete, conexion);
+
+	eliminar_paquete(paquete);
+	// ¡No te olvides de liberar las lineas y el paquete antes de regresar!
+
+}
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {

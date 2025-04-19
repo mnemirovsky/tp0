@@ -28,15 +28,18 @@ int crear_conexion(char *ip, char* puerto)
 
 	err = getaddrinfo("127.0.0.1", "4444", &hints, &server_info);
 
+	// Ahora vamos a crear el socket.
+
 	int fd_conexion = socket(server_info->ai_family,
 	                         server_info->ai_socktype,
 	                         server_info->ai_protocol);
 
-
 	freeaddrinfo(server_info);
 
-	err = connect(fd_conexion, server_info->ai_addr, server_info->ai_addrlen);
+	// Ahora que tenemos el socket, vamos a conectarlo
 
+	err = connect(fd_conexion, server_info->ai_addr, server_info->ai_addrlen);
+	
 	if (err != 0) {
 		exit(EXIT_CLIENT_FAILED_TO_CONNECT);
 	}

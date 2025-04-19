@@ -62,8 +62,6 @@ int iniciar_servidor(void)
 
 int esperar_cliente(int socket_servidor)
 {
-
-
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
 
 	if (socket_cliente == -1) {
