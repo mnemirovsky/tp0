@@ -108,7 +108,7 @@ void leer_consola(t_log* logger) {
 
 }
 
-void paquete(int *conexion)
+void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
 	char* leido;
