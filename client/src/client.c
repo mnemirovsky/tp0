@@ -90,22 +90,21 @@ t_config* iniciar_config(void)
 void leer_consola(t_log* logger) {
     char* leido;
 
-    while (1) {
-		leido = readline("> ");
-
-		if (leido) {
-			log_info(logger, "%s", leido);
-		}
-
-		if (strcmp(leido, "") == 0) {
-			free(leido);
-			break;
-		}
-
-		printf("%s\n", leido);
-		free(leido);
-	}
-
+	while (1) {
+        leido = readline("> ");
+        if (!leido) {
+            break;
+        }
+        if (leido) {
+            log_info(logger, "%s", leido);
+        }
+        if (strncmp(leido, "") == 0) {
+            free(leido);
+            break;
+        }
+        printf("%s\n", leido);
+        free(leido);
+    }
 }
 
 void paquete(int conexion)
@@ -117,20 +116,20 @@ void paquete(int conexion)
 	// Leemos y esta vez agregamos las lineas al paquete
 
 	while (1) {
-		leido = readline("> ");
-
-		if (leido) {
-			agregar_a_paquete(paquete, leido, sizeof(leido));
-		}
-
-		if (strcmp(leido, "") == 0) {
-			free(leido);
-			break;
-		}
-
-		printf("%s\n", leido);
-		free(leido);
-	}
+        leido = readline("> ");
+        if (!leido) {
+            break;
+        }
+        if (leido) {
+            agregar_a_paquete(paquete, leido, sizeof(leido));
+        }
+        if (strncmp(leido, "") == 0) {
+            free(leido);
+            break;
+        }
+        printf("%s\n", leido);
+        free(leido);
+    }
 
 	enviar_paquete(paquete, conexion);
 

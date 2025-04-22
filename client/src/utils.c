@@ -44,7 +44,7 @@ int crear_conexion(char *ip, char* puerto)
 		exit(EXIT_CLIENT_FAILED_TO_CONNECT);
 	}
 
-	freeaddrinfo(server_info);
+	// freeaddrinfo(server_info);	Pruebo sacar esto momentáneamente.
 
 	return fd_conexion;
 }
