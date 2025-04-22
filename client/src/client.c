@@ -77,7 +77,7 @@ t_log* iniciar_logger(void)
 
 t_config* iniciar_config(void)
 {
-	t_config* nuevo_config = config_create("/home/utnso/tp0/client/cliente.config");
+	t_config* nuevo_config = config_create("/home/utnso/tp0/tp0/client/cliente.config");
 	
 	if (nuevo_config == NULL) {
 		abort();
@@ -98,7 +98,7 @@ void leer_consola(t_log* logger) {
         if (leido) {
             log_info(logger, "%s", leido);
         }
-        if (strncmp(leido, "") == 0) {
+        if (leido[0] == '\0') {
             free(leido);
             break;
         }
@@ -123,7 +123,7 @@ void paquete(int conexion)
         if (leido) {
             agregar_a_paquete(paquete, leido, sizeof(leido));
         }
-        if (strncmp(leido, "") == 0) {
+        if (leido[0] == '\0') {
             free(leido);
             break;
         }
